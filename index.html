@@ -19,10 +19,17 @@
                 color: white;
                 cursor: pointer;
             }
+            p {
+                font-family: sans-serif;
+                font-size: 25px;
+                margin: -0px;
+                font-weight: bold;
+            }
         </style>
     </head>
     <body>
-        <div style="width: 100vw; height: 100vh; display: flex; justify-content: center; align-items: center; flex-direction: column; gap: 4vw;">
+        <div style="width: 100vw; height: 100vh; display: flex; justify-content: center; align-items: center; flex-direction: column; gap: 20px;">
+            <div style="display: flex; justify-content: center; align-items: center; gap: 40px; width: 50vh;"><p id="generation">Generation: 0</p><p id="population">Population: 0</p></div>
             <div class="board" id="board"></div>
             <div style="width: 50vh; display: flex; justify-content: center;
             align-items: center; gap: 3vw;">
@@ -38,6 +45,9 @@
             let height = 300;
             let paused = true;
             let ended = false;
+            let generation = 0;
+            let generationNotifier = document.getElementById("generation");
+            let populationNotifier = document.getElementById("population")
             let widthChanger = document.getElementById("width");
             widthChanger.addEventListener("input", changeStats);
             let heightChanger = document.getElementById("height");
@@ -99,6 +109,7 @@
                     if (paused) {
                         continue;
                     }
+                    let population = 0;
                     const newDivs = {};
                     for (let y = 0; y < height; y++) {
                         newDivs[y] = [];
@@ -109,6 +120,7 @@
                     for (let y = 0; y < height; y++) {
                         for (let x = 0; x < width; x++) {
                             if (newDivs[y][x]) {
+                                population++;
                                 divs[y][x].html.style.backgroundColor = "black";
                             } else {
                                 divs[y][x].html.style.backgroundColor = "white";
@@ -120,6 +132,9 @@
                             divs[j][i].filled = newDivs[j][i];
                         }
                     }
+                    generation++;
+                    generationNotifier.innerHTML = "Generation: " + generation; 
+                    populationNotifier.innerHTML = "Population: " + population;
                 }
             }
             function changeSquare(event) {
