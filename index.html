@@ -13,7 +13,7 @@
             .button {
                 background-color: red;
                 width: 50vh;
-                height: 70px;
+                height: 8vh;
                 font-size: 40px;
                 font-weight: bold;
                 color: white;
@@ -22,34 +22,48 @@
         </style>
     </head>
     <body>
-        <div style="width: 100vw; height: 100vh; display: flex; justify-content: center; align-items: center; flex-direction: column; gap: 30px;">
+        <div style="width: 100vw; height: 100vh; display: flex; justify-content: center; align-items: center; flex-direction: column; gap: 4vw;">
             <div class="board" id="board"></div>
+            <div style="width: 50vh; display: flex; justify-content: center;
+            align-items: center; gap: 3vw;">
+                <textarea style="resize: none; width: 23.5vh;" placeholder="Width (Game Pixels, DEFAULT: 300)" id="width"></textarea>
+                <textarea style="resize: none; width: 23.5vh;" placeholder="Height (Game Pixels, DEFAULT: 300)" id="height"></textarea>
+            </div>
             <button class="button" id="button">Unpause</button>
         </div>
         <script>
             const button = document.getElementById("button");
             button.addEventListener("mousedown", pause);
-            const width = 300;
-            const height = 300;
+            let width = 300;
+            let height = 300;
             let paused = true;
+            let ended = false;
+            let widthChanger = document.getElementById("width");
+            widthChanger.addEventListener("input", changeStats);
+            let heightChanger = document.getElementById("height");
+            heightChanger.addEventListener("input", changeStats);
             const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
             const board = document.getElementById("board");
-            board.style["grid-template-columns"] = `repeat(${width}, 1fr)`
-            board.style["grid-template-rows"] = `repeat(${height}, 1fr)`
+            board.style["grid-template-columns"] = `repeat(${width}, 1fr)`;
+            board.style["grid-template-rows"] = `repeat(${height}, 1fr)`;
             let divs = {};
-            for (let i = 0; i < height; i++) {
-                divs[i] = [];
-                for (let j = 0; j < width; j++) {
-                    const div = document.createElement("div");
-                    div.style["cursor"] = "pointer";
-                    let filled = false;
-                    if (Math.random() < 0.5) {
-                        div.style["background-color"] = "black";
-                        filled = true;
+            function createBoard() {
+                board.innerHTML = "";
+                divs = {};
+                for (let i = 0; i < height; i++) {
+                    divs[i] = [];
+                    for (let j = 0; j < width; j++) {
+                        const div = document.createElement("div");
+                        div.style["cursor"] = "pointer";
+                        let filled = false;
+                        if (Math.random() < 0.5) {
+                            div.style["background-color"] = "black";
+                            filled = true;
+                        }
+                        board.appendChild(div);
+                        divs[i].push({filled: filled, html: div})
+                        div.addEventListener("mousedown", changeSquare);
                     }
-                    board.appendChild(div);
-                    divs[i].push({filled: filled, html: div})
-                    div.addEventListener("mousedown", changeSquare);
                 }
             }
             function checkConditions(x, y) {
@@ -75,8 +89,13 @@
                 }
             }
             async function conwaysLife() {
+                createBoard()
                 while (true) {
                     await sleep(10);
+                    if (ended) {
+                        ended = false;
+                        conwaysLife();
+                    }
                     if (paused) {
                         continue;
                     }
@@ -126,6 +145,15 @@
                     button.style.backgroundColor = "red";
                     button.innerHTML = "Unpause";
                 }
+            }
+            function changeStats(event) {
+                target = event.target;
+                if (target === widthChanger) {
+                    width = parseInt(target.value, 10);
+                } else {
+                    height = parseInt(target.value, 10);
+                }
+                ended = true;
             }
             conwaysLife();
         </script>
