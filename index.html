@@ -54,11 +54,11 @@
             heightChanger.addEventListener("input", changeStats);
             const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
             const board = document.getElementById("board");
-            board.style["grid-template-columns"] = `repeat(${width}, 1fr)`;
-            board.style["grid-template-rows"] = `repeat(${height}, 1fr)`;
             let divs = {};
             function createBoard() {
                 board.innerHTML = "";
+                board.style["grid-template-columns"] = `repeat(${width}, 1fr)`;
+                board.style["grid-template-rows"] = `repeat(${height}, 1fr)`;
                 divs = {};
                 for (let i = 0; i < height; i++) {
                     divs[i] = [];
